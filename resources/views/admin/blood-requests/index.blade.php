@@ -9,7 +9,18 @@
 <div class="card">
     <div class="table-wrap">
         <table>
-            <thead><tr><th>Recipient</th><th>Blood Type</th><th>Units</th><th>Reason</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
+            <thead>
+                <tr>
+                    <th>Recipient</th>
+                    <th>Blood Type</th>
+                    <th>Units</th>
+                    <th>Reason</th>
+                    <th>Requested</th>
+                    <th>Status</th>
+                    <th>Actioned</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
             <tbody>
             @forelse($requests as $r)
             <tr>
@@ -17,8 +28,20 @@
                 <td><strong>{{ $r->blood_type }}</strong></td>
                 <td>{{ $r->units_needed }}</td>
                 <td style="font-size:.78rem">{{ $r->reason }}</td>
-                <td>{{ $r->created_at->format('M j, Y') }}</td>
-                <td><span class="status {{ $r->status === 'Approved' ? 'status-active' : ($r->status === 'Rejected' ? 'status-inactive' : 'status-pending') }}">{{ $r->status }}</span></td>
+                <td style="font-size:.78rem">{{ $r->created_at->format('M j, Y g:i A') }}</td>
+                <td>
+                    <span class="status {{ $r->status === 'Approved' ? 'status-active' : ($r->status === 'Rejected' ? 'status-inactive' : 'status-pending') }}">
+                        {{ $r->status }}
+                    </span>
+                </td>
+                <td style="font-size:.75rem;color:var(--muted)">
+                    @if($r->actioned_at)
+                        {{ $r->actioned_at->format('M j, Y g:i A') }}<br>
+                        <span style="color:var(--muted2)">by {{ $r->actionedBy->name ?? '—' }}</span>
+                    @else
+                        —
+                    @endif
+                </td>
                 <td style="display:flex;gap:6px">
                     @if($r->status === 'Pending')
                     <form method="POST" action="{{ route('admin.blood-requests.approve', $r->id) }}">
@@ -35,7 +58,7 @@
                 </td>
             </tr>
             @empty
-            <tr><td colspan="7" style="color:var(--muted);text-align:center;padding:24px">No blood requests yet.</td></tr>
+            <tr><td colspan="8" style="color:var(--muted);text-align:center;padding:24px">No blood requests yet.</td></tr>
             @endforelse
             </tbody>
         </table>

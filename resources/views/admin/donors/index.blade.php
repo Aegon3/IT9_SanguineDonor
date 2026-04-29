@@ -2,16 +2,7 @@
 @section('title', 'Donors — SanguineDonor')
 
 @section('sidebar')
-<div class="nav-section">Main</div>
-<a href="{{ route('admin.dashboard') }}" class="{{ request()->routeIs('admin.dashboard') ? 'active':'' }}"><i class="sidebar-icon">&#9632;</i> Dashboard</a>
-<a href="{{ route('admin.donors.create') }}" class="{{ request()->routeIs('admin.donors.*') ? 'active':'' }}"><i class="sidebar-icon">&#43;</i> Register Donor</a>
-<a href="{{ route('admin.appointments.index') }}" class="{{ request()->routeIs('admin.appointments.*') ? 'active':'' }}"><i class="sidebar-icon">&#9776;</i> Appointments</a>
-<div class="nav-section">Records</div>
-<a href="{{ route('admin.donations.index') }}" class="{{ request()->routeIs('admin.donations.*') ? 'active':'' }}"><i class="sidebar-icon">&#9679;</i> Record Donation</a>
-<a href="{{ route('admin.inventory.index') }}" class="{{ request()->routeIs('admin.inventory.*') ? 'active':'' }}"><i class="sidebar-icon">&#9670;</i> Blood Inventory</a>
-<a href="{{ route('admin.blood-requests.index') }}" class="{{ request()->routeIs('admin.blood-requests.*') ? 'active':'' }}"><i class="sidebar-icon">&#9651;</i> Blood Requests</a>
-<a href="{{ route('admin.recipients.index') }}" class="{{ request()->routeIs('admin.recipients.*') ? 'active':'' }}"><i class="sidebar-icon">&#9745;</i> Recipients</a>
-<a href="{{ route('admin.reports.index') }}" class="{{ request()->routeIs('admin.reports.*') ? 'active':'' }}"><i class="sidebar-icon">&#9741;</i> Reports</a>
+@include('admin.partials.sidebar')
 @endsection
 
 @section('content')
@@ -26,7 +17,7 @@
     <div class="table-wrap">
         <table>
             <thead>
-                <tr><th>Name</th><th>Blood Type</th><th>Contact</th><th>Last Donation</th><th>Donations</th><th>Status</th><th>Actions</th></tr>
+                <tr><th>Name</th><th>Blood Type</th><th>Contact</th><th>Last Donation</th><th>Donations</th><th>Status</th><th>Verification</th><th>Actions</th></tr>
             </thead>
             <tbody>
             @forelse($donors as $d)
@@ -46,15 +37,35 @@
                 <td>{{ $d->total_donations }}</td>
                 <td><span class="status status-{{ strtolower($d->status) }}">{{ $d->status }}</span></td>
                 <td>
+                    @if($d->user)
+                        <span class="status {{ $d->user->verification_status === 'approved' ? 'status-active' : ($d->user->verification_status === 'declined' ? 'status-inactive' : 'status-pending') }}">
+                            {{ ucfirst($d->user->verification_status) }}
+                        </span>
+                    @else
+                        <span style="color:var(--muted);font-size:.75rem">Walk-in</span>
+                    @endif
+                </td>
+                <td style="display:flex;gap:4px;flex-wrap:wrap">
+                    @if($d->user && $d->user->verification_status === 'pending')
+                    <form method="POST" action="{{ route('admin.donors.approve', $d->id) }}">
+                        @csrf
+                        <button type="submit" class="btn btn-red btn-sm">Approve</button>
+                    </form>
+                    <form method="POST" action="{{ route('admin.donors.decline', $d->id) }}" onsubmit="return confirm('Decline this donor?')">
+                        @csrf
+                        <button type="submit" class="btn btn-ghost btn-sm">Decline</button>
+                    </form>
+                    @else
                     <a href="{{ route('admin.donors.edit', $d->id) }}" class="btn btn-outline btn-sm">Edit</a>
                     <form method="POST" action="{{ route('admin.donors.destroy', $d->id) }}" style="display:inline" onsubmit="return confirm('Remove donor?')">
                         @csrf @method('DELETE')
                         <button type="submit" class="btn btn-ghost btn-sm">Remove</button>
                     </form>
+                    @endif
                 </td>
             </tr>
             @empty
-            <tr><td colspan="7" style="color:var(--muted);text-align:center;padding:24px">No donors registered yet.</td></tr>
+            <tr><td colspan="8" style="color:var(--muted);text-align:center;padding:24px">No donors registered yet.</td></tr>
             @endforelse
             </tbody>
         </table>

@@ -13,6 +13,7 @@
 
 <div class="form-section">
     <div class="form-section-title">Book Appointment</div>
+    @if($donor)
     <form method="POST" action="{{ route('donor.schedule.store') }}">
         @csrf
         <div class="form-grid">
@@ -33,6 +34,11 @@
             <button type="submit" class="btn btn-red">Confirm Appointment</button>
         </div>
     </form>
+    @else
+    <div style="color:var(--muted);font-size:.82rem;padding:16px 0">
+        Your donor profile is still being set up. Please wait for admin approval before scheduling an appointment.
+    </div>
+    @endif
 </div>
 
 <div class="card">

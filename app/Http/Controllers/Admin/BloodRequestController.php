@@ -5,14 +5,13 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\BloodRequest;
 use App\Models\BloodInventory;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class BloodRequestController extends Controller
 {
     public function index()
     {
-        $requests = BloodRequest::with('user')->orderByDesc('created_at')->get();
+        $requests = BloodRequest::with(['user','actionedBy'])->orderByDesc('created_at')->get();
         return view('admin.blood-requests.index', compact('requests'));
     }
 
@@ -25,14 +24,22 @@ class BloodRequestController extends Controller
                 return;
             }
             $inventory->decrement('units_available', $bloodRequest->units_needed);
-            $bloodRequest->update(['status' => 'Approved']);
+            $bloodRequest->update([
+                'status'      => 'Approved',
+                'actioned_at' => now(),
+                'actioned_by' => auth()->id(),
+            ]);
         });
         return back()->with('success', 'Request approved and inventory updated.');
     }
 
     public function reject(BloodRequest $bloodRequest)
     {
-        $bloodRequest->update(['status' => 'Rejected']);
+        $bloodRequest->update([
+            'status'      => 'Rejected',
+            'actioned_at' => now(),
+            'actioned_by' => auth()->id(),
+        ]);
         return back()->with('success', 'Request rejected.');
     }
 }

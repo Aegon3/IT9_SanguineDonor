@@ -4,13 +4,14 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Donor;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class DonorController extends Controller
 {
     public function index()
     {
-        $donors = Donor::orderByDesc('created_at')->get();
+        $donors = Donor::with('user')->orderByDesc('created_at')->get();
         return view('admin.donors.index', compact('donors'));
     }
 
@@ -56,6 +57,11 @@ class DonorController extends Controller
             'status'         => 'required|in:Active,Pending,Inactive',
         ]);
         $donor->update($data);
+
+        if ($donor->user) {
+            $donor->user->update(['name' => $data['first_name'] . ' ' . $data['last_name']]);
+        }
+
         return redirect()->route('admin.donors.index')->with('success', 'Donor updated.');
     }
 
@@ -63,5 +69,33 @@ class DonorController extends Controller
     {
         $donor->delete();
         return redirect()->route('admin.donors.index')->with('success', 'Donor removed.');
+    }
+
+    public function approve(Donor $donor)
+    {
+        $donor->update(['status' => 'Active']);
+
+        if ($donor->user) {
+            $donor->user->update([
+                'verification_status' => 'approved',
+                'verified_at'         => now(),
+            ]);
+        }
+
+        return back()->with('success', 'Donor approved successfully.');
+    }
+
+    public function decline(Donor $donor)
+    {
+        $donor->update(['status' => 'Inactive']);
+
+        if ($donor->user) {
+            $donor->user->update([
+                'verification_status' => 'declined',
+                'verified_at'         => now(),
+            ]);
+        }
+
+        return back()->with('success', 'Donor declined.');
     }
 }

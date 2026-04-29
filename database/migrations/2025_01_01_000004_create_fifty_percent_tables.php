@@ -7,12 +7,11 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        // Recipient verification
         Schema::table('users', function (Blueprint $table) {
             $table->enum('verification_status', ['pending','approved','declined'])->default('pending')->after('role');
+            $table->timestamp('verified_at')->nullable()->after('verification_status');
         });
 
-        // Appointments
         Schema::create('appointments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('donor_id')->constrained()->onDelete('cascade');
@@ -23,7 +22,6 @@ return new class extends Migration {
             $table->timestamps();
         });
 
-        // Donations
         Schema::create('donations', function (Blueprint $table) {
             $table->id();
             $table->foreignId('donor_id')->constrained()->onDelete('cascade');
@@ -35,7 +33,6 @@ return new class extends Migration {
             $table->timestamps();
         });
 
-        // Blood requests
         Schema::create('blood_requests', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
@@ -43,6 +40,8 @@ return new class extends Migration {
             $table->integer('units_needed')->default(1);
             $table->string('reason')->nullable();
             $table->enum('status', ['Pending','Approved','Rejected'])->default('Pending');
+            $table->timestamp('actioned_at')->nullable();
+            $table->foreignId('actioned_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
         });
     }
@@ -53,7 +52,7 @@ return new class extends Migration {
         Schema::dropIfExists('donations');
         Schema::dropIfExists('appointments');
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('verification_status');
+            $table->dropColumn(['verification_status','verified_at']);
         });
     }
 };

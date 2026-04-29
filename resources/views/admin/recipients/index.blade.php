@@ -9,7 +9,17 @@
 <div class="card">
     <div class="table-wrap">
         <table>
-            <thead><tr><th>Name</th><th>Username</th><th>Email</th><th>Registered</th><th>Status</th><th>Actions</th></tr></thead>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Registered</th>
+                    <th>Status</th>
+                    <th>Actioned At</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
             <tbody>
             @forelse($recipients as $r)
             <tr>
@@ -17,7 +27,14 @@
                 <td>{{ $r->username }}</td>
                 <td>{{ $r->email ?? '—' }}</td>
                 <td>{{ $r->created_at->format('M j, Y') }}</td>
-                <td><span class="status {{ $r->verification_status === 'approved' ? 'status-active' : ($r->verification_status === 'declined' ? 'status-inactive' : 'status-pending') }}">{{ ucfirst($r->verification_status) }}</span></td>
+                <td>
+                    <span class="status {{ $r->verification_status === 'approved' ? 'status-active' : ($r->verification_status === 'declined' ? 'status-inactive' : 'status-pending') }}">
+                        {{ ucfirst($r->verification_status) }}
+                    </span>
+                </td>
+                <td style="font-size:.75rem;color:var(--muted)">
+                    {{ $r->verified_at ? \Carbon\Carbon::parse($r->verified_at)->format('M j, Y g:i A') : '—' }}
+                </td>
                 <td style="display:flex;gap:6px;flex-wrap:wrap">
                     @if($r->verification_status !== 'approved')
                     <form method="POST" action="{{ route('admin.recipients.approve', $r->id) }}">
@@ -34,7 +51,7 @@
                 </td>
             </tr>
             @empty
-            <tr><td colspan="6" style="color:var(--muted);text-align:center;padding:24px">No recipients yet.</td></tr>
+            <tr><td colspan="7" style="color:var(--muted);text-align:center;padding:24px">No recipients yet.</td></tr>
             @endforelse
             </tbody>
         </table>

@@ -6,6 +6,11 @@
 @section('content')
 <div class="page-title">Appointments</div>
 <div class="page-sub">Manage all donor appointments</div>
+
+<div style="margin-bottom:16px">
+    <a href="{{ route('admin.appointments.create') }}" class="btn btn-red">+ Create Appointment</a>
+</div>
+
 <div class="card">
     <div class="table-wrap">
         <table>
