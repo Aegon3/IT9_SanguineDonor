@@ -81,7 +81,7 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 /* Hidden radio */
 .role-radio{display:none}
 .btn-signin{
-    width:100%;padding:10px;background:var(--red);color:#fff;
+    width:100%;padding:10px;background:#ffffff;color:#000;
     border:none;border-radius:4px;font-size:.85rem;font-weight:600;
     font-family:'Inter',sans-serif;cursor:pointer;transition:background .15s;
     margin-top:4px;
