@@ -18,22 +18,20 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 .topnav-brand{display:flex;align-items:center;gap:8px;font-size:.85rem;font-weight:600;color:var(--text)}
 .dot{width:10px;height:10px;background:var(--red-l);border-radius:50%}
 .split{display:flex;min-height:100vh;padding-top:44px}
-.hero{flex:1;position:relative;overflow:hidden;background:linear-gradient(135deg,#1a0808 0%,#2d0f0f 50%,#0f0a0a 100%);display:flex;flex-direction:column;justify-content:flex-end;padding:48px;}
+.hero{flex:1;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;padding:48px;}
 .hero-overlay{position:absolute;inset:0;background:linear-gradient(to right,rgba(10,5,5,.7),rgba(10,5,5,.3));z-index:1}
-.hero-bg{position:absolute;inset:0;z-index:0;background:radial-gradient(ellipse at 20% 50%,rgba(192,57,43,.12) 0%,transparent 60%)}
+.hero-bg{position:absolute;inset:0;z-index:0;}
+.hero-bg img{width:100%;height:100%;object-fit:cover;object-position:center;}
 .hero-content{position:relative;z-index:2}
 .hero-headline{font-size:2.6rem;font-weight:700;line-height:1.15;margin-bottom:12px;color:#fff}
 .hero-headline span{color:var(--red-l)}
 .hero-sub{font-size:.85rem;color:rgba(240,232,232,.6);max-width:340px;margin-bottom:36px;line-height:1.6}
-.hero-stats{display:flex;gap:32px}
-.hero-stat-val{font-size:1.2rem;font-weight:700;color:#fff}
-.hero-stat-label{font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;color:rgba(240,232,232,.4)}
 .panel{width:420px;flex-shrink:0;background:var(--surface);border-left:1px solid var(--border);display:flex;flex-direction:column;justify-content:center;padding:40px 36px;overflow-y:auto;}
 .panel-title{font-size:1.5rem;font-weight:700;color:var(--red-l);margin-bottom:4px}
 .panel-sub{font-size:.78rem;color:var(--muted);margin-bottom:24px}
 .tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:24px}
 .tab{padding:8px 0;font-size:.82rem;font-weight:500;color:var(--muted2);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;margin-right:20px;background:none;border-top:none;border-left:none;border-right:none;font-family:'Inter',sans-serif;transition:color .15s,border-color .15s;}
-.tab.active{color:var(--text);border-bottom-color:var(--red-l)}
+.tab.active{color:#fff;border-bottom-color:var(--red-l)}
 .form-group{display:flex;flex-direction:column;gap:5px;margin-bottom:12px}
 .form-group label{font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:500}
 .form-group input,.form-group select{padding:9px 12px;background:var(--bg);border:1px solid var(--border2);border-radius:4px;font-size:.85rem;font-family:'Inter',sans-serif;color:var(--text);outline:none;transition:border-color .15s;}
@@ -63,16 +61,13 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-h
 
 <div class="split">
     <div class="hero">
-        <div class="hero-bg"></div>
+        <div class="hero-bg">
+            <img src="{{ asset('images/sanguine.jpg') }}" alt="">
+        </div>
         <div class="hero-overlay"></div>
         <div class="hero-content">
             <div class="hero-headline">Every <span>drop</span><br>saves a life.</div>
             <div class="hero-sub">SanguineDonor connects donors, recipients, and admins in one unified platform.</div>
-            <div class="hero-stats">
-                <div><div class="hero-stat-val">1,248</div><div class="hero-stat-label">Active Donors</div></div>
-                <div><div class="hero-stat-val">3,872</div><div class="hero-stat-label">Units Collected</div></div>
-                <div><div class="hero-stat-val">98%</div><div class="hero-stat-label">Match Rate</div></div>
-            </div>
         </div>
     </div>
 
