@@ -9,9 +9,28 @@ use Illuminate\Http\Request;
 
 class DonorController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $donors = Donor::with('user')->orderByDesc('created_at')->get();
+        $query = Donor::with('user');
+
+        if ($request->filled('search')) {
+            $s = $request->search;
+            $query->where(function($q) use ($s) {
+                $q->where('first_name', 'like', "%$s%")
+                  ->orWhere('last_name',  'like', "%$s%")
+                  ->orWhere('email',      'like', "%$s%");
+            });
+        }
+
+        if ($request->filled('blood_type')) {
+            $query->where('blood_type', $request->blood_type);
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $donors = $query->orderByDesc('created_at')->get();
         return view('admin.donors.index', compact('donors'));
     }
 
@@ -74,28 +93,18 @@ class DonorController extends Controller
     public function approve(Donor $donor)
     {
         $donor->update(['status' => 'Active']);
-
         if ($donor->user) {
-            $donor->user->update([
-                'verification_status' => 'approved',
-                'verified_at'         => now(),
-            ]);
+            $donor->user->update(['verification_status' => 'approved', 'verified_at' => now()]);
         }
-
         return back()->with('success', 'Donor approved successfully.');
     }
 
     public function decline(Donor $donor)
     {
         $donor->update(['status' => 'Inactive']);
-
         if ($donor->user) {
-            $donor->user->update([
-                'verification_status' => 'declined',
-                'verified_at'         => now(),
-            ]);
+            $donor->user->update(['verification_status' => 'declined', 'verified_at' => now()]);
         }
-
         return back()->with('success', 'Donor declined.');
     }
 }

@@ -80,6 +80,21 @@ class DonorDashboardController extends Controller
         return view('donor.profile', compact('donor'));
     }
 
+    public function updatePassword(Request $request)
+    {
+        $request->validate([
+            'current_password' => 'required',
+            'password'         => 'required|string|min:6|confirmed',
+        ]);
+
+        if (!\Hash::check($request->current_password, auth()->user()->password)) {
+            return back()->withErrors(['current_password' => 'Current password is incorrect.']);
+        }
+
+        auth()->user()->update(['password' => \Hash::make($request->password)]);
+        return redirect()->route('donor.profile')->with('success', 'Password updated successfully.');
+    }
+
     public function updateProfile(Request $request)
     {
         $donor = $this->getDonor();

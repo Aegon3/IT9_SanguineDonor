@@ -7,6 +7,7 @@
 <a href="{{ route('recipient.request') }}" class="{{ request()->routeIs('recipient.request') ? 'active':'' }}"><i class="sidebar-icon">&#9679;</i> Request Blood</a>
 <a href="{{ route('recipient.my-requests') }}" class="{{ request()->routeIs('recipient.my-requests') ? 'active':'' }}"><i class="sidebar-icon">&#9776;</i> My Requests</a>
 @endif
+<a href="{{ route('recipient.profile') }}" class="{{ request()->routeIs('recipient.profile') ? 'active':'' }}"><i class="sidebar-icon">&#43;</i> My Profile</a>
 @endsection
 @section('content')
 <div class="page-title">My Dashboard</div>

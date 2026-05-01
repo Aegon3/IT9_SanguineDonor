@@ -34,30 +34,30 @@ Route::middleware(['auth','role:admin'])->prefix('admin')->name('admin.')->group
     Route::resource('inventory', BloodInventoryController::class)->only(['index','edit','update']);
 
     // Recipients verification
-    Route::get('/recipients',                    [RecipientController::class, 'index'])->name('recipients.index');
-    Route::post('/recipients/{user}/approve',    [RecipientController::class, 'approve'])->name('recipients.approve');
-    Route::post('/recipients/{user}/decline',    [RecipientController::class, 'decline'])->name('recipients.decline');
+    Route::get('/recipients',           [RecipientController::class, 'index'])->name('recipients.index');
+    Route::post('/recipients/{user}/approve', [RecipientController::class, 'approve'])->name('recipients.approve');
+    Route::post('/recipients/{user}/decline', [RecipientController::class, 'decline'])->name('recipients.decline');
 
     // Appointments
-    Route::get('/appointments',                  [AppointmentController::class, 'index'])->name('appointments.index');
-    Route::get('/appointments/create',           [AppointmentController::class, 'create'])->name('appointments.create');
-    Route::post('/appointments',                 [AppointmentController::class, 'store'])->name('appointments.store');
-    Route::post('/appointments/{appointment}',   [AppointmentController::class, 'update'])->name('appointments.update');
+    Route::get('/appointments',                    [AppointmentController::class, 'index'])->name('appointments.index');
+    Route::get('/appointments/create',             [AppointmentController::class, 'create'])->name('appointments.create');
+    Route::post('/appointments',                   [AppointmentController::class, 'store'])->name('appointments.store');
+    Route::post('/appointments/{appointment}',     [AppointmentController::class, 'update'])->name('appointments.update');
 
     // Donor verification
     Route::post('/donors/{donor}/approve', [DonorController::class, 'approve'])->name('donors.approve');
     Route::post('/donors/{donor}/decline', [DonorController::class, 'decline'])->name('donors.decline');
 
     // Donations
-    Route::get('/donations',               [DonationController::class, 'index'])->name('donations.index');
-    Route::get('/donations/create',        [DonationController::class, 'create'])->name('donations.create');
-    Route::post('/donations',              [DonationController::class, 'store'])->name('donations.store');
+    Route::get('/donations',           [DonationController::class, 'index'])->name('donations.index');
+    Route::get('/donations/create',    [DonationController::class, 'create'])->name('donations.create');
+    Route::post('/donations',          [DonationController::class, 'store'])->name('donations.store');
     Route::delete('/donations/{donation}', [DonationController::class, 'destroy'])->name('donations.destroy');
 
-    // Blood requests
-    Route::get('/blood-requests',                         [BloodRequestController::class, 'index'])->name('blood-requests.index');
-    Route::post('/blood-requests/{bloodRequest}/approve', [BloodRequestController::class, 'approve'])->name('blood-requests.approve');
-    Route::post('/blood-requests/{bloodRequest}/reject',  [BloodRequestController::class, 'reject'])->name('blood-requests.reject');
+    // Blood requests from recipients
+    Route::get('/blood-requests',                        [BloodRequestController::class, 'index'])->name('blood-requests.index');
+    Route::post('/blood-requests/{bloodRequest}/approve',[BloodRequestController::class, 'approve'])->name('blood-requests.approve');
+    Route::post('/blood-requests/{bloodRequest}/reject', [BloodRequestController::class, 'reject'])->name('blood-requests.reject');
 
     // Reports
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
@@ -65,19 +65,23 @@ Route::middleware(['auth','role:admin'])->prefix('admin')->name('admin.')->group
 
 // Donor
 Route::middleware(['auth','role:donor'])->prefix('donor')->name('donor.')->group(function () {
-    Route::get('/dashboard',                      [DonorDashboardController::class, 'index'])->name('dashboard');
-    Route::get('/schedule',                       [DonorDashboardController::class, 'schedule'])->name('schedule');
-    Route::post('/schedule',                      [DonorDashboardController::class, 'storeSchedule'])->name('schedule.store');
-    Route::post('/schedule/{appointment}/cancel', [DonorDashboardController::class, 'cancelSchedule'])->name('schedule.cancel');
-    Route::get('/history',                        [DonorDashboardController::class, 'history'])->name('history');
-    Route::get('/profile',                        [DonorDashboardController::class, 'profile'])->name('profile');
-    Route::post('/profile',                       [DonorDashboardController::class, 'updateProfile'])->name('profile.update');
+    Route::get('/dashboard',                          [DonorDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/schedule',                           [DonorDashboardController::class, 'schedule'])->name('schedule');
+    Route::post('/schedule',                          [DonorDashboardController::class, 'storeSchedule'])->name('schedule.store');
+    Route::post('/schedule/{appointment}/cancel',     [DonorDashboardController::class, 'cancelSchedule'])->name('schedule.cancel');
+    Route::get('/history',                            [DonorDashboardController::class, 'history'])->name('history');
+    Route::get('/profile',                            [DonorDashboardController::class, 'profile'])->name('profile');
+    Route::post('/profile',                           [DonorDashboardController::class, 'updateProfile'])->name('profile.update');
+    Route::post('/password',                          [DonorDashboardController::class, 'updatePassword'])->name('password.update');
 });
 
 // Recipient
 Route::middleware(['auth','role:recipient'])->prefix('recipient')->name('recipient.')->group(function () {
-    Route::get('/dashboard', [RecipientDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard',   [RecipientDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/profile',     [RecipientDashboardController::class, 'profile'])->name('profile');
+    Route::post('/password',   [RecipientDashboardController::class, 'updatePassword'])->name('password.update');
 
+    // These routes require approval
     Route::middleware('recipient.verified')->group(function () {
         Route::get('/request',     [RecipientDashboardController::class, 'requestBlood'])->name('request');
         Route::post('/request',    [RecipientDashboardController::class, 'storeRequest'])->name('request.store');

@@ -10,6 +10,26 @@ use Illuminate\Support\Facades\Cache;
 
 class RecipientDashboardController extends Controller
 {
+    public function profile()
+    {
+        return view('recipient.profile');
+    }
+
+    public function updatePassword(Request $request)
+    {
+        $request->validate([
+            'current_password' => 'required',
+            'password'         => 'required|string|min:6|confirmed',
+        ]);
+
+        if (!\Hash::check($request->current_password, auth()->user()->password)) {
+            return back()->withErrors(['current_password' => 'Current password is incorrect.']);
+        }
+
+        auth()->user()->update(['password' => \Hash::make($request->password)]);
+        return redirect()->route('recipient.profile')->with('success', 'Password updated successfully.');
+    }
+
     public function index()
     {
         $inventory  = BloodInventory::orderBy('blood_type')->get();
